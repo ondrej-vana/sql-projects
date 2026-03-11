@@ -206,7 +206,9 @@ unit_prices AS (
 				 market,
 				 region,
 -- Using NULLIF to avoid division by zero.
-				 (SUM(sales / NULLIF(1 - discount, 0)) / NULLIF(SUM(quantity), 0))::numeric AS unit_price
+				 (SUM(sales / NULLIF(1 - discount, 0))
+				 /
+				 NULLIF(SUM(quantity), 0))::numeric AS unit_price
 	FROM orders
 	WHERE quantity IS NOT NULL
 	GROUP BY product_id, market, region
@@ -217,7 +219,9 @@ SELECT m.product_id,
 			 m.region,
 -- Type casting as NUMERIC because the ROUND() function
 -- doesn't accept DOUBLE PRECISION as an argument.
-			 ROUND((m.sales / NULLIF(1 - m.discount, 0))::numeric / NULLIF(u.unit_price, 0)) AS calculated_quantity
+			 ROUND((m.sales / NULLIF(1 - m.discount, 0))::numeric
+			 /
+			 NULLIF(u.unit_price, 0)) AS calculated_quantity
 FROM missing_quantity AS m
 LEFT JOIN unit_prices AS u
 USING (product_id, market, region);
