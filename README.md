@@ -5,34 +5,9 @@ A few examples of queries from my projects, with inline comments to explain them
 
 ---
 
-### Identifying the oldest business on each continent
-
-- technique:
-	- window functions and ranking as opposed to aggregation (MIN)
-		- allows for easier reformulation of the query if needed
+## Data Cleaning
 
 ```sql
-SELECT continent,
-			 country,
-			 business,
-			 year_founded
-FROM (
-	SELECT c.continent,
-				 c.country,
-				 b.business,
-				 b.year_founded,
--- Using RANK() as opposed to MIN(),
--- a more elegant solution which allows for a later change of the WHERE condition.
--- (e.g. to list the top 3 businesses instead of just the oldest one)
-				 RANK() OVER (
-					 PARTITION BY c.continent 
-					 ORDER BY b.year_founded
-				 ) AS founded_rank
-	FROM businesses AS b
-	JOIN countries AS c USING (country_code)
-) AS ranked
-WHERE founded_rank = 1
-ORDER BY year_founded ASC;
 ```
 
 ---
@@ -135,4 +110,36 @@ SELECT m.product_id,
 FROM missing_quantity AS m
 LEFT JOIN unit_prices AS u
 USING (product_id, market, region);
+```
+
+---
+
+### Identifying the oldest business on each continent
+
+- technique:
+	- window functions and ranking as opposed to aggregation (MIN)
+		- allows for easier reformulation of the query if needed
+
+```sql
+SELECT continent,
+			 country,
+			 business,
+			 year_founded
+FROM (
+	SELECT c.continent,
+				 c.country,
+				 b.business,
+				 b.year_founded,
+-- Using RANK() as opposed to MIN(),
+-- a more elegant solution which allows for a later change of the WHERE condition.
+-- (e.g. to list the top 3 businesses instead of just the oldest one)
+				 RANK() OVER (
+					 PARTITION BY c.continent 
+					 ORDER BY b.year_founded
+				 ) AS founded_rank
+	FROM businesses AS b
+	JOIN countries AS c USING (country_code)
+) AS ranked
+WHERE founded_rank = 1
+ORDER BY year_founded ASC;
 ```
