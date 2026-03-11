@@ -76,4 +76,4 @@ FROM (
 	JOIN countries AS c USING (country_code)
 ) AS ranked
 WHERE founded_rank = 1
-ORDER BY b.year_founded ASC;
+ORDER BY year_founded ASC;
