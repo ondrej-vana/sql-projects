@@ -12,7 +12,7 @@ unit_prices AS (
 				 market,
 				 region,
 -- Using NULLIF to avoid division by zero.
-				 (SUM(sales / NULLIF(1 - discount, 0)) / SUM(quantity))::numeric AS unit_price
+				 (SUM(sales / NULLIF(1 - discount, 0)) / NULLIF(SUM(quantity), 0))::numeric AS unit_price
 	FROM orders
 	WHERE quantity IS NOT NULL
 	GROUP BY product_id, market, region
