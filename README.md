@@ -206,7 +206,7 @@ unit_prices AS (
 				 market,
 				 region,
 -- Using NULLIF to avoid division by zero.
-				 (SUM(sales / NULLIF(1 - discount, 0)) / SUM(quantity))::numeric AS unit_price
+				 (SUM(sales / NULLIF(1 - discount, 0)) / NULLIF(SUM(quantity), 0))::numeric AS unit_price
 	FROM orders
 	WHERE quantity IS NOT NULL
 	GROUP BY product_id, market, region
@@ -249,18 +249,23 @@ WITH product_sales AS (
 	JOIN products AS p USING(product_id)
 	GROUP BY p.category, p.product_name
 )
-SELECT category,
-			 product_name,
-			 product_total_sales,
+SELECT *
+FROM (
+		SELECT category,
+				product_name,
+				product_total_sales,
 -- With ROW_NUMBER(), I will select exactly 5 products for each category.
 -- Whereas with RANK(), more than 5 products could be selected 
 -- if they share the same rank.
-			 ROW_NUMBER() OVER (
-				 PARTITION BY category
-				 ORDER BY product_total_sales DESC
-			 ) AS product_rank
+				ROW_NUMBER() OVER (
+					PARTITION BY category
+					ORDER BY product_total_sales DESC
+				) AS product_rank
 FROM product_sales
+) AS ranked
 -- Filtering only products ranked in the top 5.
+-- Again, a subquery has to be used before the WHERE clause,
+-- this is because the WHERE clause is executed before any window functions. 
 WHERE product_rank <= 5
 ORDER BY category, product_rank;
 ```
