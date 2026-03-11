@@ -155,6 +155,10 @@ duplicates_removed AS (
 		FROM cleaned_data
 	) AS duplicates
 -- Step 3: Filtering out the duplicates.
+-- Note that a subquery had to be used in order to allow for filtering
+-- the results of a window function in the WHERE clause.
+-- This could be solved without a subquery using the QUALIFY clause in some engines
+-- (unavailable in PostgreSQL).
 	WHERE duplicate_rank = 1
 ),
 -- Step 4: Flagging data quality.
