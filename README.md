@@ -5,23 +5,18 @@ A few examples of queries from my projects, with inline comments to explain them
 
 ---
 
-## Data Cleaning
+# Sales Dataset
 
-```sql
-```
-
----
-
-## Sales Data Project
-
-- dataset: retail orders
+- raw dataset: retail orders
 
 table <code>orders</code>:
 
 |column name|description|data type|
 |---|---|---|
 |<code>row_id</code>|unique record id|<code>INTEGER</code>|
-|<code>order_id</code>| order identifier|<code>TEXT</code>|
+|<code>order_id</code>|order identifier|<code>TEXT</code>|
+|<code>order_date</code>|date order took place|<code>DATE</code>|
+|<code>customer_id</code>|customer identifier|<code>TEXT</code>|
 |<code>market</code>|market where order was made|<code>TEXT</code>|
 |<code>region</code>|customer's region|<code>TEXT</code>|
 |<code>product_id</code>|product identifier|<code>TEXT</code>|
@@ -37,43 +32,132 @@ table <code>products</code>:
 |<code>order_id</code>|category of products|<code>TEXT</code>|
 |<code>market</code>|name of product|<code>TEXT</code>|
 
-### 1. Top 5 products by total sales per category
+---
+
+# A. Data Preparation
+
+An example of a process of data preparation.
+
+## 1. Initial Data Quality Report
 
 - techniques:
-	- aggregation and GROUP BY – calculating the SUM of sales for each product
-	- joining – to combine data from <code>orders</code> and <code>products</code> tables
-	- window functions and rank – ranking each product within its category
-	- CTEs – to avoid aggregation inside the window function
-		- this makes the query more portable between engines
- 		- i.e. instead of <code>OVER(PARTITION BY p.category ORDER BY SUM(o.sales) DESC)</code> in the main query
+	- aggregate functions and FILTER – counting only specified rows
 
 ```sql
--- Using a CTE to avoid aggregating total_sales inside the window function.
-WITH product_sales AS (
-	SELECT p.category,
-				 p.product_name,
-				 SUM(o.sales) AS product_total_sales
-	FROM orders AS o
-	JOIN products AS p USING(product_id)
-	GROUP BY p.category, p.product_name
-)
-SELECT category,
-			 product_name,
-			 product_total_sales,
--- With ROW_NUMBER(), I will select exactly 5 products for each category.
--- Whereas with RANK(), more than 5 products could be selected 
--- if they share the same rank.
-			 ROW_NUMBER() OVER (
-				 PARTITION BY category
-				 ORDER BY product_total_sales DESC
-			 ) AS product_rank
-FROM product_sales
--- Filtering only products ranked in the top 5.
-WHERE product_rank <= 5
-ORDER BY category, product_rank;
+-- Counting the total number of rows.
+SELECT COUNT(*) AS total_rows,
+-- Counting records with missing quantity.
+	   COUNT(*) FILTER (WHERE quantity IS NULL) AS missing_quantity,
+-- Counting records with invalid sales values.
+	   COUNT(*) FILTER (WHERE sales < 0) AS negative_sales,
+-- Counting unique number of products and customers.
+	   COUNT(DISTINCT product_id) AS unique_products,
+	   COUNT(DISTINCT customer_id) AS unique_customers
+FROM orders;
 ```
 
-### 2. Imputing missing values for quantity in product orders
+## 2. Data Cleaning
+
+- techniques:
+	- string functions – to standardize text columns
+	- CASE conditional expression – to select rows that require specific cleaning
+
+```sql
+SELECT order_id,
+-- Standardize the format of text columns.
+	   UPPER(market),
+	   INITCAP(region),
+-- Standardize discount values.
+	   CASE
+	   	  WHEN discount < 0 THEN 0
+		  WHEN discount > 1 THEN 1
+		  ELSE discount
+	   END AS cleaned_discount
+FROM orders;
+```
+
+## 3. Detect duplicate records
+
+- techniques:
+	- aggregation/ranking and window functions – assuming counts/ranks greater than 1 show the presence of potentially duplicate records
+
+```sql
+SELECT order_id,
+	   order_date,
+	   customer_id,
+	   product_id,
+-- Counting the number of duplicate records.
+	   COUNT(*) OVER (
+			PARTITION BY order_date, customer_id, product_id
+	   ) AS duplicate_count,
+-- Using ROW_NUMBER() to ensure all rank values are distinct,
+-- as opposed to RANK() where multiple rows can share the same rank value.
+	   ROW_NUMBER() OVER (
+			PARTITION BY order_date, customer_id, product_id
+			ORDER BY order_id ASC
+	   ) AS duplicate_rank
+FROM orders
+-- Filtering for duplicated order records.
+WHERE COUNT(*) OVER(PARTITION BY order_date, customer_id, product_id) > 1;
+```
+
+## 4. Data Validation
+
+- techniques:
+	- CASE conditional expression – flagging various data problems
+
+```sql
+SELECT order_id,
+	   date_order,
+	   customer_id,
+	   product_id,
+	   quantity,
+	   sales,
+-- Flagging data validation status using the CASE expression.
+	   CASE
+			WHEN quantity IS NULL THEN 'missing quantity'
+			WHEN quantity <= 0 THEN 'invalid quantity'
+			WHEN sales < 0 THEN 'negative sales'
+			ELSE 'valid'
+	   END AS data_quality_flag
+FROM orders;
+```
+
+## Combining data cleaning steps into one query
+
+Using multiple CTEs to break down the process into sequential steps.
+
+```sql
+WITH cleaned_data AS (
+	-- Step 1: Data cleaning.
+	FROM orders
+),
+duplicates_removed AS (
+	SELECT *
+	FROM (
+		-- Step 2: Detecting duplicates.
+		FROM cleaned_data
+	) AS duplicates_ranked
+	-- Step 3: Filtering out the duplicates.
+	WHERE duplicate_rank = 1
+),
+validated_data AS (
+	-- Step 4: Flagging data quality.
+	FROM duplicates_removed
+)
+-- Step 5: Selecting only clean records.
+SELECT *
+FROM validated_data
+WHERE data_quality_flag = 'valid';
+```
+
+---
+
+## Imputing Missing Values
+
+Alternatively, I can decide not to ignore records with missing quantity values and calculate the missing quantity based on the available data.
+
+#### Filling missing values for quantity in product orders
 
 Missing quantities are estimated based on average unit prices per product, market, and region.
 
@@ -114,32 +198,42 @@ USING (product_id, market, region);
 
 ---
 
-### Identifying the oldest business on each continent
+## B. Data Analysis
 
-- technique:
-	- window functions and ranking as opposed to aggregation (MIN)
-		- allows for easier reformulation of the query if needed
+An example of a data analysis query using the same dataset.
+
+#### Top 5 products by total sales per category
+
+- techniques:
+	- aggregation and GROUP BY – calculating the SUM of sales for each product
+	- joining – to combine data from <code>orders</code> and <code>products</code> tables
+	- window functions and rank – ranking each product within its category
+	- CTEs – to avoid aggregation inside the window function
+		- this makes the query more portable between engines
+ 		- i.e. instead of <code>OVER(PARTITION BY p.category ORDER BY SUM(o.sales) DESC)</code> in the main query
 
 ```sql
-SELECT continent,
-			 country,
-			 business,
-			 year_founded
-FROM (
-	SELECT c.continent,
-				 c.country,
-				 b.business,
-				 b.year_founded,
--- Using RANK() as opposed to MIN(),
--- a more elegant solution which allows for a later change of the WHERE condition.
--- (e.g. to list the top 3 businesses instead of just the oldest one)
-				 RANK() OVER (
-					 PARTITION BY c.continent 
-					 ORDER BY b.year_founded
-				 ) AS founded_rank
-	FROM businesses AS b
-	JOIN countries AS c USING (country_code)
-) AS ranked
-WHERE founded_rank = 1
-ORDER BY year_founded ASC;
+-- Using a CTE to avoid aggregating total_sales inside the window function.
+WITH product_sales AS (
+	SELECT p.category,
+				 p.product_name,
+				 SUM(o.sales) AS product_total_sales
+	FROM orders AS o
+	JOIN products AS p USING(product_id)
+	GROUP BY p.category, p.product_name
+)
+SELECT category,
+			 product_name,
+			 product_total_sales,
+-- With ROW_NUMBER(), I will select exactly 5 products for each category.
+-- Whereas with RANK(), more than 5 products could be selected 
+-- if they share the same rank.
+			 ROW_NUMBER() OVER (
+				 PARTITION BY category
+				 ORDER BY product_total_sales DESC
+			 ) AS product_rank
+FROM product_sales
+-- Filtering only products ranked in the top 5.
+WHERE product_rank <= 5
+ORDER BY category, product_rank;
 ```
