@@ -190,7 +190,7 @@ SELECT m.product_id,
 			 m.region,
 -- Type casting as NUMERIC because the ROUND() function
 -- doesn't accept DOUBLE PRECISION as an argument.
-			 ROUND((m.sales / NULLIF(1 - discount, 0))::numeric / u.unit_price) AS calculated_quantity
+			 ROUND((m.sales / NULLIF(1 - discount, 0))::numeric / NULLIF(u.unit_price), 0) AS calculated_quantity
 FROM missing_quantity AS m
 LEFT JOIN unit_prices AS u
 USING (product_id, market, region);
