@@ -30,7 +30,7 @@ table <code>products</code>:
 |---|---|---|
 |<code>product_id</code>|unique identifier for product|<code>TEXT</code>|
 |<code>category</code>|category of products|<code>TEXT</code>|
-|<code>market</code>|name of product|<code>TEXT</code>|
+|<code>product_name</code>|name of product|<code>TEXT</code>|
 
 ---
 
@@ -65,14 +65,14 @@ FROM orders;
 ```sql
 SELECT order_id,
 -- Standardize the format of text columns.
-	   UPPER(market),
-	   INITCAP(region),
+	   UPPER(market) AS market,
+	   INITCAP(region) AS region,
 -- Standardize discount values.
 	   CASE
 	   	  WHEN discount < 0 THEN 0
 		  WHEN discount > 1 THEN 1
 		  ELSE discount
-	   END AS cleaned_discount
+	   END AS discount
 FROM orders;
 ```
 
