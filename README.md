@@ -65,10 +65,11 @@ table <code>products</code>:
 ### 1. Top 5 products by total sales per category
 
 - techniques:
-	- aggregation – calculating the SUM of sales for each product
+	- aggregation and GROUP BY – calculating the SUM of sales for each product
 	- joining – to combine data from <code>orders</code> and <code>products</code> tables
 	- window functions and rank – ranking each product within its category
 	- CTEs – to avoid aggregation inside the window function
+		- this makes the query more portable between engines
  		- i.e. instead of <code>OVER(PARTITION BY p.category ORDER BY SUM(o.sales) DESC)</code> in the main query
 
 ```sql
