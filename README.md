@@ -1,7 +1,7 @@
 
 # Ondřej Váňa's PostgreSQL Portfolio
 
-A few examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
+Examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
 
 ---
 
@@ -36,7 +36,7 @@ table <code>products</code>:
 
 # A. Data Preparation
 
-An example of a process of data preparation.
+Data preparation process that covers data cleaning, deduplication, and data validation.
 
 ## 1. Initial Data Quality Report
 
