@@ -96,9 +96,7 @@ SELECT order_id,
 			PARTITION BY order_date, customer_id, product_id
 			ORDER BY order_id ASC
 	   ) AS duplicate_rank
-FROM orders
--- Filtering for duplicated order records.
-WHERE duplicate_count > 1;
+FROM orders;
 ```
 
 ## 4. Data Validation
