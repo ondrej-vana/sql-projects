@@ -3,14 +3,14 @@
 -- Using a CTE to avoid aggregating total_sales inside the window function.
 WITH product_sales AS (
 	SELECT p.category,
-				 p.product_name,
+				 p.product_id,
 				 SUM(o.sales) AS product_total_sales
 	FROM orders AS o
 	JOIN products AS p USING(product_id)
-	GROUP BY p.category, p.product_name
+	GROUP BY p.category, p.product_id
 )
 SELECT category,
-			 product_name,
+			 product_id,
 			 product_total_sales,
 -- With ROW_NUMBER(), I will select exactly 5 products for each category.
 -- Whereas with RANK(), more than 5 products could be selected 
