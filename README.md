@@ -243,14 +243,14 @@ An example of a data analysis query using the same dataset.
 -- Using a CTE to avoid aggregating total_sales inside the window function.
 WITH product_sales AS (
 	SELECT p.category,
-				 p.product_id,
+				 p.product_name,
 				 SUM(o.sales) AS product_total_sales
 	FROM orders AS o
 	JOIN products AS p USING(product_id)
-	GROUP BY p.category, p.product_id
+	GROUP BY p.category, p.product_name
 )
 SELECT category,
-			 product_id,
+			 product_name,
 			 product_total_sales,
 -- With ROW_NUMBER(), I will select exactly 5 products for each category.
 -- Whereas with RANK(), more than 5 products could be selected 
