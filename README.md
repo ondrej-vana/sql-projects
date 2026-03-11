@@ -98,7 +98,7 @@ SELECT order_id,
 	   ) AS duplicate_rank
 FROM orders
 -- Filtering for duplicated order records.
-WHERE COUNT(*) OVER(PARTITION BY order_date, customer_id, product_id) > 1;
+WHERE duplicate_count > 1;
 ```
 
 ## 4. Data Validation
@@ -108,7 +108,7 @@ WHERE COUNT(*) OVER(PARTITION BY order_date, customer_id, product_id) > 1;
 
 ```sql
 SELECT order_id,
-	   date_order,
+	   order_date,
 	   customer_id,
 	   product_id,
 	   quantity,
