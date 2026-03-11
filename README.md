@@ -182,7 +182,7 @@ WHERE data_quality_flag = 'valid';
 
 ## Imputing Missing Values
 
-Alternatively, I can decide not to ignore records with missing quantity values and calculate the missing quantity based on the available data.
+Alternatively, I can decide not to ignore records with missing quantity values and instead calculate it based on the available data.
 
 #### Filling missing values for quantity in product orders
 
