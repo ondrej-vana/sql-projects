@@ -1,7 +1,7 @@
 
 # Ondřej Váňa's PostgreSQL Portfolio
 
-A few examples of queries from my projects, with inline comments to explain them.
+A few examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
 
 ---
 
