@@ -15,14 +15,14 @@ FROM orders;
 
 SELECT order_id,
 -- Standardize the format of text columns.
-	   UPPER(market),
-	   INITCAP(region),
+	   UPPER(market) AS market,
+	   INITCAP(region) AS region,
 -- Standardize discount values.
 	   CASE
 	   	  WHEN discount < 0 THEN 0
 		  WHEN discount > 1 THEN 1
 		  ELSE discount
-	   END AS cleaned_discount
+	   END AS discount
 FROM orders;
 
 -- 3. Detecting duplicates
