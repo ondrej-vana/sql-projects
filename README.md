@@ -3,6 +3,8 @@
 
 Examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
 
+See also [my solutions for LeetCode SQL 50 questions](https://github.com/ondrej-vana/sql-projects/blob/main/LeetCode.md).
+
 ---
 
 # Sales Dataset
