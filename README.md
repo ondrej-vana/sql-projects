@@ -3,5 +3,5 @@
 
 Welcome to my SQL portfolio. Feel free to browse the following topics:
 
-## [Data Cleaning and Analysis in PostgreSQL](postgresql/PostgreSQL.md)
-Examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
+- [Data Cleaning and Analysis in PostgreSQL](postgresql/PostgreSQL.md)
+- [Debugging and Rewriting a Faulty Error Logger in PL/pgSQL](postgresql/DebuggingFunction.md)
