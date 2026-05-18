@@ -1,4 +1,4 @@
-# Reconstructing a “Personal Chronology”
+# Reconstructing a “Personal Chronology” from Media Metadata
 
 **Technology used:**
 
