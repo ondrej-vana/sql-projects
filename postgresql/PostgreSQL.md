@@ -29,8 +29,6 @@ table <code>products</code>:
 |<code>category</code>|category of products|<code>TEXT</code>|
 |<code>product_name</code>|name of product|<code>TEXT</code>|
 
----
-
 ## A. Data Preparation
 
 Data preparation process that covers data cleaning, deduplication, and data validation.
