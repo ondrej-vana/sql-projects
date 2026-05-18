@@ -1,4 +1,4 @@
-# Ondřej Váňa's PostgreSQL Portfolio
+# Cleaning Data and Analysis in PostgreSQL
 
 Examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
 
