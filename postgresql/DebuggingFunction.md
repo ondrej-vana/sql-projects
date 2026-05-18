@@ -51,7 +51,7 @@ $$ language plpgsql;
 ---
 
 <details>
-<summary>the <code>debug_statement</code> function</summary>
+<summary>The <code>debug_statement</code> function code for context.</summary>
 
 ```sql
 CREATE OR REPLACE FUNCTION debug_statement(sql_stmt TEXT)
@@ -80,3 +80,5 @@ $$ LANGUAGE plpgsql;
 ```
 
 </details>
+
+→ [Return to my SQL Portfolio.](/../../)
