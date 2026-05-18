@@ -8,7 +8,7 @@
 
 ## Context
 
-My partner maintains a long-running music library on her phone where the order of acquisition and listening functions as a kind of personal timeline, relying on the file system's timestamps. After moving ~500 audio files from internal storage to an SD card, virtually every file now showed the same creation date, and any music player sorting by date added/modified became meaningless. One destructive step (bulk move) thus erased her personal history of musical discovery.
+My friend maintains a long-running music library on her phone where the order of acquisition and listening functions as a kind of personal timeline, relying on the file system's timestamps. After moving ~500 audio files from internal storage to an SD card, virtually every file now showed the same creation date, and any music player sorting by date added/modified became meaningless. One destructive step (bulk move) thus erased her personal history of musical discovery.
 
 ## The Problem
 
