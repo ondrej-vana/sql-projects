@@ -2,9 +2,7 @@
 
 Examples of queries from my projects demonstrating data cleaning, transformation, and analysis, with inline comments to explain them.
 
----
-
-# Sales Dataset
+## Sales Dataset
 
 - raw dataset: retail orders
 
@@ -33,11 +31,11 @@ table <code>products</code>:
 
 ---
 
-# A. Data Preparation
+## A. Data Preparation
 
 Data preparation process that covers data cleaning, deduplication, and data validation.
 
-## 1. Initial Data Quality Report
+### 1. Initial Data Quality Report
 
 - techniques:
 	- aggregate functions and FILTER – counting only specified rows
@@ -55,7 +53,7 @@ SELECT COUNT(*) AS total_rows,
 FROM orders;
 ```
 
-## 2. Data Cleaning
+### 2. Data Cleaning
 
 - techniques:
 	- string functions – to standardize text columns
@@ -75,7 +73,7 @@ SELECT order_id,
 FROM orders;
 ```
 
-## 3. Detect duplicate records
+### 3. Detect Duplicate Records
 
 - techniques:
 	- aggregation/ranking and window functions – assuming counts/ranks greater than 1 show the presence of potentially duplicate records
@@ -98,7 +96,7 @@ SELECT order_id,
 FROM orders;
 ```
 
-## 4. Data Validation
+### 4. Data Validation
 
 - techniques:
 	- CASE conditional expression – flagging various data problems
@@ -120,7 +118,7 @@ SELECT order_id,
 FROM orders;
 ```
 
-## Combining data cleaning steps into one query
+### Combining Data Cleaning Steps into One Query
 
 Using multiple CTEs to break down the process into sequential steps.
 
@@ -177,13 +175,11 @@ FROM validated_data
 WHERE data_quality_flag = 'valid';
 ```
 
----
-
-## Imputing Missing Values
+### Imputing Missing Values
 
 Alternatively, I can decide not to ignore records with missing quantity values and instead calculate it based on the available data.
 
-#### Filling missing values for quantity in product orders
+#### Filling Missing Values for Quantity in Product Orders
 
 Missing quantities are estimated based on average unit prices per product, market, and region.
 
@@ -226,13 +222,11 @@ LEFT JOIN unit_prices AS u
 USING (product_id, market, region);
 ```
 
----
-
 ## B. Data Analysis
 
 An example of a data analysis query using the same dataset.
 
-#### Top 5 products by total sales per category
+### Top 5 Products by Total Sales per Category
 
 - techniques:
 	- aggregation and GROUP BY – calculating the SUM of sales for each product
@@ -272,3 +266,7 @@ FROM product_sales
 WHERE product_rank <= 5
 ORDER BY category, product_rank;
 ```
+
+---
+
+→ [Return to my SQL Portfolio.](/../../)
