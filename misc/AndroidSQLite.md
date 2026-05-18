@@ -1,4 +1,10 @@
-# Reconstructing a “Personal Chronology” with SQLite and Power Query M
+# Reconstructing a “Personal Chronology”
+
+**Technology used:**
+
+- Android's SQLite
+- Windows cmd
+- Power Query and the M language
 
 ## Context
 
