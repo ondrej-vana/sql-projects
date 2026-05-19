@@ -18,7 +18,7 @@ My friend maintains a long-running music library on her phone where the order of
 - File system timestamps flattened during the move.
 - Android's media cataloguing is handled by MediaStore rather than through direct file browsing for many apps, with implementations varying by device.
 - The raw SQLite MediaStore database is inaccessible without root.
-- Output needs to be usable in a real music player via an external playlist (.m3u), preserving a stable and explicit order.
+- Output needs to be usable in a music player via an external playlist (.m3u), preserving a stable and explicit order.
 
 ## Workflow
 
