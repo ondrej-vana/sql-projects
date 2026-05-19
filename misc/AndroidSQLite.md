@@ -33,7 +33,7 @@ adb shell content query ^
   --uri "content://media/external/audio/media" ^
   --projection "_data:title:artist:date_added:date_modified" ^
   --sort "date_added" ^
-  > mediastore_audio_by_modified.txt     # extracting the timestamps into a .txt file
+  > mediastore_audio_by_added.txt     # extracting the timestamps into a .txt file
 ```
 
 <details>
@@ -62,7 +62,7 @@ ADB content query output is not CSV. It uses comma separators between <code>key=
 MediaStore timestamps are Unix epoch seconds (e.g. 1775681230), that is seconds elapsed since January 1st 1970. I converted these into a comparable datetime using a custom column specified in **Power Query M**:
 
 ```M
-= Table.AddColumn(#"PreviousStep", "DateAdded", each #duration(0,0,0,[DateAddedUnix]) + #datetime(1970,1,1,0,0,0))
+= Table.AddColumn(#"PreviousStep", "DateModified", each #duration(0,0,0,[DateModifiedUnix]) + #datetime(1970,1,1,0,0,0))
 ```
 
 ### 4. Preserving the Order in an .m3u Playlist
